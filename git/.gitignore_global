@@ -1,0 +1,14 @@
+*~
+.DS_Store
+nbproject
+*.sublime-*
+.buildpath
+.project
+.settings
+deployment.properties
+deployment.xml
+.idea
+.ide/*
+.vscode
+.env
+.env-*
