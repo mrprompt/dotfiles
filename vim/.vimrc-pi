@@ -1,0 +1,216 @@
+" put this line first in ~/.vimrc
+set nocompatible | filetype indent plugin on | syn on
+
+filetype off
+filetype plugin indent on
+
+fun! SetupVAM()
+  let c = get(g:, 'vim_addon_manager', {})
+  let g:vim_addon_manager = c
+  let c.plugin_root_dir = expand('$HOME', 1) . '/.vim/vim-addons'
+
+  " Force your ~/.vim/after directory to be last in &rtp always:
+  " let g:vim_addon_manager.rtp_list_hook = 'vam#ForceUsersAfterDirectoriesToBeLast'
+
+  " most used options you may want to use:
+  " let c.log_to_buf = 1
+  " let c.auto_install = 0
+  let &rtp.=(empty(&rtp)?'':',').c.plugin_root_dir.'/vim-addon-manager'
+  if !isdirectory(c.plugin_root_dir.'/vim-addon-manager/autoload')
+    execute '!git clone --depth=1 git://github.com/MarcWeber/vim-addon-manager '
+        \       shellescape(c.plugin_root_dir.'/vim-addon-manager', 1)
+  endif
+
+  " This provides the VAMActivate command, you could be passing plugin names, too
+  call vam#ActivateAddons([], {})
+endfun
+call SetupVAM()
+
+" ACTIVATING PLUGINS
+call vam#ActivateAddons(["Python_3.x_Standard_Library_Reference", "Python_Syntax_Folding", "python-syntax", "pythoncomplete", "python-imports", "python_check_syntax"], {})
+" use <c-x><c-p> to complete plugin names
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""" Setting
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set is                  " opcoes espertas de busca - (IncrementedSearch)
+set hls                 " opcoes espertas de busca - (HighLightedSearch)
+set ic                  " opcoes espertas de busca - (IgnoreCase)
+set scs                 " opcoes espertas de busca - (SmartCaSe)
+set magic               " opcoes espertas de busca
+set sm                  " ShowMatch: mostra o par do parenteses/chaves recem fechado
+set hid                 " HIDden: nao lembro pra que servia mas era massa
+set aw                  " AutoWrite: gravacao automatica a cada alteracao
+set ai                  " AutoIndent: identacao automatica
+set ts=4                " TabStop: numero de caracteres de avanco do TAB
+set report=0            " reporta acoes com linhas
+set shm=filmnrwxt       " SHortMessages: encurta as mensagem do rodape
+set et                  " ExpandTab: troca TABs por espacos
+set ruler               " mostra a posicao do cursor, regua
+set showcmd             " mostra o comando sendo executado
+set laststatus=2        " mostra N linhas de estado (status)
+set textwidth=80        " quebra de linha
+set bs=2                " comportamento do backspace
+"set nosmartindent       " desligando pois esta padrao no CL40
+set smartindent         " indentacao automatica
+set visualbell          " pisca a tela ao inves de bipar
+"set wrap                " forca a quebra de linha
+set nowrap
+set nojoinspaces        " ! coloca 2 espacos apos o . quando usando o gq
+set sw=4                " numero de colunas para o comando > (ShiftWidth)
+set wildmode=longest,list:full  "para completacao do TAB igual bash
+set t_Co=256            " 256 colors
+set backspace=indent,eol,start " faz o backpspace se comportar que nem gente
+set nu                  " numero de linhas
+set cursorline          " Highlight current line
+set background=dark     " eh importante o bg estar ANTES do terminfo
+set pastetoggle=<c-p>   " No modo Insert, Ctrl-P liga/desliga o "paste"
+set viminfo='10,\"30,:40,%,n~/.viminfo " Guarda posicao do cursor e historico da linha de comando
+set fileencodings=utf8  " sempre utf-8
+set encoding=utf8       " sempre utf-8
+set wildmode=longest,list " Complete files like a shell.
+set wildmenu            " Enhanced command line completion.
+set showmode            " Display the mode you're in.
+set foldmethod=indent   " fold based on indent
+"set foldmethod=syntax   " fold based on syntax file
+set foldnestmax=3       " deepest fold is 3 levels
+set nofoldenable        " dont fold by default
+set title               " Set the terminal's title
+set hidden              " Handle multiple buffers better.
+set novisualbell        " sem erro na tela
+set noerrorbells        " sem bip
+set history=1000        " Store lots of :cmdline history
+set scrolloff=3
+set sidescrolloff=7
+set splitbelow
+set splitright
+set mouse=a
+set mousehide
+set mousemodel=popup    " right-click pops up context menu
+set ttymouse=xterm2
+set sidescroll=1
+set nobackup            " Don't make a backup before overwriting a file.
+set nowritebackup       " And again.
+set noswapfile          " Swap file is boring
+set directory=/tmp      " Keep swap files in one location
+set timeoutlen=500
+set clipboard+=unnamed,unnamedplus " use the system clipboard for yank/put/delete
+set wildignore+=*/build/*,*.egginfo,*.pyc,*.mo,*/dist/*
+set modeline
+set paste
+
+" mostrando coluna da direita
+"let &colorcolumn="80,".join(range(120,999),",")
+"highlight ColorColumn ctermbg=235 guibg=#2c2d27
+
+" ligando a sintaxe colorida
+syntax on
+
+" Abreviacoes uteis para sua sanidade mental
+cab W w| cab Q q| cab Wq wq| cab wQ wq| cab WQ wq
+
+" Busca colorida em verde
+hi Search ctermbg=green ctermfg=black
+hi IncSearch ctermbg=black ctermfg=cyan
+
+" Ruler e cursor sempre em branco
+"hi StatusLine ctermfg=white
+
+"" key bindings
+let mapleader = ","
+
+" Tira as cores das ocorrências de busca e recoloca (booleano)
+nno <S-F11> :set hls!<bar>set hls?<CR>
+
+" Arquivos .sh sao sempre bash, e não sh
+au FileType sh let b:is_bash=1
+
+" Python: TAB colorido e outras configuracoes
+autocmd FileType python setlocal tabstop=4 expandtab shiftwidth=4 softtabstop=4
+au FileType python set ts=4 tw=80 noet
+au FileType python syn match pythonTAB '\t\+'
+au FileType python hi pythonTAB ctermbg=blue
+au FileType python hi pythonString ctermfg=lightgreen
+au FileType python hi pythonRawString ctermfg=lightgreen
+
+" Mostra os espaços em branco inúteis no final da linha
+au BufNewFile,BufRead * syn match brancomala '\s\+$' | hi brancomala ctermbg=red
+
+" Guardar info da sintaxe desde o inicio do arquivo (nao se perde, fica lento)
+"syn sync fromstart
+"syn sync minlines=500
+
+" Barra de espaço mapeado para PageDown no modo de comandos
+noremap <Space> <PageDown>
+
+" Clear last search highlighting
+nnoremap <Space> :noh<cr>
+
+" Easier navigation between split windows
+nnoremap <c-j> <c-w>j
+nnoremap <c-k> <c-w>k
+nnoremap <c-h> <c-w>h
+nnoremap <c-l> <c-w>l
+
+" indent/unindent visual mode selection with tab/shift+tab
+vmap <tab> >gv
+vmap <s-tab> <gv
+
+" alternando entre terminal e editor
+noremap <C-d> :sh<cr>
+
+" mostrando tabs
+syntax match Tab /\t/
+hi Tab gui=underline guifg=blue ctermbg=blue
+
+""" recarregando .vimrc ao modificar
+autocmd! bufwritepost .vimrc source %
+
+" auto save
+autocmd BufLeave,CursorHold,CursorHoldI,FocusLost * silent! wa
+
+" folding
+inoremap <F9> <C-O>za
+nnoremap <F9> za
+onoremap <F9> <C-C>za
+vnoremap <F9> zf
+
+" With the following, you can press F8 to show all buffers in tabs, or to close
+" all tabs (toggle: it alternately executes :tab ball and :tabo).
+let notabs = 1
+nnoremap <silent> <F8> :let notabs=!notabs<Bar>:if notabs<Bar>:tabo<Bar>:else<Bar>:tab ball<Bar>:tabn<Bar>:endif<CR>
+
+" Jump to the main window.
+autocmd VimEnter * wincmd p
+
+"converter os TABs ja existentes
+"retab
+
+" markdwon
+autocmd BufNewFile,BufReadPost *.md set filetype=markdown
+let g:markdown_fenced_languages = ['html', 'python', 'bash=sh']
+
+" This allows buffers to be hidden if you've modified a buffer.
+" This is almost a must if you wish to use buffers in this way.
+set hidden
+
+" To open a new empty buffer
+" This replaces :tabnew which I used to bind to this mapping
+nmap <silent> <leader>t :enew<cr>
+
+" Move to the next buffer
+nmap <silent> <leader>n :bnext<CR>
+
+"" Move to the previous buffer
+nmap <silent> <leader>p :bprevious<CR>
+
+" Close the current buffer and move to the previous one
+" This replicates the idea of closing a tab
+nmap <silent> <leader>c :bp <BAR> bd #<CR>
+
+" Show all open buffers and their status
+nmap <leader>bl :ls<CR>"
+
+" alternando tabs
+nmap <silent> <D-S>{ :tbpre
+nmap <silent> <D-S>} :tbnext
